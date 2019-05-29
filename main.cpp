@@ -29,7 +29,7 @@ int main(int argc, char* args[]) {
 		return -1;
 	}
 
-	MediaManager.loadSprite("img/hello_world.bmp");
+	MediaManager.loadSprite("img/hello_world.png");
 
 	while (!update()) {
 		MediaManager.draw();
