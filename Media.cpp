@@ -67,7 +67,6 @@ void Media::freeAllSprites() {
 }
 
 void Media::draw() {
-	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(mRenderer);
 	for (size_t i = 0; i < mSprites.size(); i++) {
 		mSprites[i].render(0, 0, mRenderer);

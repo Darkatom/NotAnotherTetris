@@ -32,7 +32,7 @@ bool Sprite::loadFromFile(string path, SDL_Renderer* renderer) {
 		return false;
 	}
 
-	SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+	//SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 	newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 	if (newTexture == NULL) {
