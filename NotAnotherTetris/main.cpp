@@ -30,7 +30,6 @@ int main(int argc, char* args[]) {
 
 	while (!update()) {
 		MediaManager.draw();
-		SDL_Delay(500);
 	} 
 
 	quit();
