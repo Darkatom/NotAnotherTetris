@@ -1,8 +1,9 @@
 #include <SDL_image.h>
 #include "Sprite.h"
 
-Sprite::Sprite() {
+Sprite::Sprite(Rect* newRect) {
 	mTexture = NULL;
+	rect = newRect;
 	mWidth = 0;
 	mHeight = 0;
 }
@@ -11,14 +12,25 @@ Sprite::~Sprite() {
 	free();
 }
 
+void Sprite::destroy() {
+	if (mTexture == NULL) {
+		return;
+	}
+
+	SDL_DestroyTexture(mTexture);
+	mTexture = NULL;
+	rect = nullptr;
+	mWidth = 0;
+	mHeight = 0;
+}
+
 void Sprite::free() {
 	if (mTexture == NULL) {
 		return;
 	}
 
 	mTexture = nullptr;
-	//SDL_DestroyTexture(mTexture);
-	mTexture = NULL;
+	rect = nullptr;
 	mWidth = 0;
 	mHeight = 0;
 }
@@ -49,9 +61,15 @@ bool Sprite::loadFromFile(string path, SDL_Renderer* renderer) {
 	return mTexture != NULL;
 }
 
-void Sprite::render(int x, int y, SDL_Renderer* renderer) {
-	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
-	if (SDL_RenderCopy(renderer, mTexture, NULL, &renderQuad) < 0) {
+void Sprite::render(SDL_Renderer* renderer) {	
+	SDL_Rect renderQuad = { 
+		rect->position.x, 
+		rect->position.y,
+		rect->scale.x * mWidth,
+		rect->scale.y * mHeight
+	};
+	
+	if (SDL_RenderCopyEx(renderer, mTexture, NULL, &renderQuad, rect->rotation, NULL, SDL_FLIP_NONE) < 0) {
 		printf("Image could not be rendered! SDL Error: %s\n", SDL_GetError());
 	}
 }

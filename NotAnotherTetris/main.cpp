@@ -5,6 +5,7 @@
 
 #include "Media.h"
 #include "Input.h"
+#include "Rect.h"
 
 using namespace std;
 
@@ -12,6 +13,7 @@ using namespace std;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const string APP_NAME = "Not Another Tetris";
+Rect helloRect(0, 0);
 
 bool init();		// Init app systems
 bool update();		// Update frame logic
@@ -26,7 +28,7 @@ int main(int argc, char* args[]) {
 		return -1;
 	}
 
-	MediaManager.loadSprite("img/hello_world.png");
+	MediaManager.loadSprite("img/hello_world.png", &helloRect);
 
 	while (!update()) {
 		MediaManager.draw();
@@ -60,6 +62,27 @@ bool update() {
 		return true;
 	}
 
+	if (InputManager.getKeyDown(Down)) {
+		helloRect.scale.x -= 0.1;
+		helloRect.scale.y -= 0.1;
+		helloRect.scale.x = helloRect.scale.x < 0.1 ? 0.1 : helloRect.scale.x;
+		helloRect.scale.y = helloRect.scale.y < 0.1 ? 0.1 : helloRect.scale.y;
+	}
+
+	if (InputManager.getKeyDown(Up)) {
+		helloRect.scale.x += 0.1;
+		helloRect.scale.y += 0.1;
+		helloRect.scale.x = helloRect.scale.x > 1 ? 1 : helloRect.scale.x;
+		helloRect.scale.y = helloRect.scale.y > 1 ? 1 : helloRect.scale.y;
+	}
+
+	if (InputManager.getKey(Left)) {
+		helloRect.rotation -= 0.1;
+	}
+
+	if (InputManager.getKey(Right)) {
+		helloRect.rotation += 0.1;
+	}
 	// Update game
 
 	return false;

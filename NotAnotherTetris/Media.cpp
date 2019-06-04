@@ -10,7 +10,7 @@ Media::Media() {
 }
 
 Media::~Media() {
-	freeAllSprites();
+	destroyAllSprites();
 }
 
 bool Media::initWindow(std::string appName, int screenWidth, int screenHeight) {
@@ -65,8 +65,8 @@ void Media::destroyWindow() {
 	mRenderer = NULL;
 }
 
-bool Media::loadSprite(std::string path) {
-	Sprite newSprite;
+bool Media::loadSprite(std::string path, Rect* rect) {
+	Sprite newSprite(rect);
 	
 	if (!newSprite.loadFromFile(path, mRenderer)) {
 		printf("Failed to load texture image at %s!\n", path.c_str());
@@ -77,22 +77,22 @@ bool Media::loadSprite(std::string path) {
 	return true;
 }
 
-void Media::freeAllSprites() {
+void Media::destroyAllSprites() {
 	for (size_t i = 0; i < mSprites.size(); i++) {
-		mSprites[i].free();
+		mSprites[i].destroy();
 	}
 }
 
 void Media::draw() {
 	SDL_RenderClear(mRenderer);
 	for (size_t i = 0; i < mSprites.size(); i++) {
-		mSprites[i].render(0, 0, mRenderer);
+		mSprites[i].render(mRenderer);
 	}
 	SDL_RenderPresent(mRenderer);
 }
 
 void Media::quit() {
-	freeAllSprites();
+	destroyAllSprites();
 	MediaManager.destroyWindow();
 	IMG_Quit();
 }

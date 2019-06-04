@@ -14,8 +14,8 @@ public:
 	bool initWindow(std::string appName, int screenWidth, int screenHeight);
 	void destroyWindow();
 
-	bool loadSprite(std::string path);
-	void freeAllSprites();
+	bool loadSprite(std::string path, Rect* rect);
+	void destroyAllSprites();
 
 	void draw();
 	void quit();
