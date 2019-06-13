@@ -1,7 +1,4 @@
 #include "Media.h"
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-
 
 Media MediaManager;	// Global media manager
 
@@ -66,15 +63,52 @@ void Media::destroyWindow() {
 }
 
 bool Media::loadSprite(std::string path, Rect* rect) {
+	SDL_Texture* texture;
 	Sprite newSprite(rect);
 	
-	if (!newSprite.loadFromFile(path, mRenderer)) {
-		printf("Failed to load texture image at %s!\n", path.c_str());
+	texture = getTexture(path);
+	if (texture == nullptr) {
+		texture = loadTexture(path);
+		if (texture == nullptr) {
+			printf("Failed to load texture image at %s!\n", path.c_str());
+			return false;
+		}
+		textures.insert({ path, texture });
+	}
+		
+	newSprite.setTexture(texture);
+	mSprites.push_back(newSprite);
+	return true;
+}
+
+SDL_Texture* Media::loadTexture(std::string path) {
+	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+	if (loadedSurface == NULL) {
+		printf("Unable to load %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+		SDL_FreeSurface(loadedSurface);
 		return false;
 	}
 
-	mSprites.push_back(newSprite);
-	return true;
+	//SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+
+	SDL_Texture* mTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
+	if (mTexture == NULL) {
+		printf("Unable to create texture from %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
+		SDL_FreeSurface(loadedSurface);
+		return false;
+	}
+
+	return mTexture;
+}
+
+SDL_Texture* Media::getTexture(std::string path) {
+	std::map<std::string, SDL_Texture*>::iterator it = textures.find(path);
+	SDL_Texture* texture;
+	if (it != textures.end()) { //element found;		
+		return it->second;
+	}
+
+	return nullptr;
 }
 
 void Media::destroyAllSprites() {

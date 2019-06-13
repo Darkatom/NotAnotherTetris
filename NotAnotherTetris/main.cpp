@@ -14,6 +14,7 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const string APP_NAME = "Not Another Tetris";
 Rect helloRect(0, 0);
+Rect doubleRect(0, 0);
 
 bool init();		// Init app systems
 bool update();		// Update frame logic
@@ -28,7 +29,13 @@ int main(int argc, char* args[]) {
 		return -1;
 	}
 
-	MediaManager.loadSprite("img/hello_world.png", &helloRect);
+	std:string imgPath = "img/hello_world.png";
+
+	MediaManager.loadSprite(imgPath, &helloRect);
+	MediaManager.loadSprite(imgPath, &doubleRect);
+
+	doubleRect.scale.x = 0.5;
+	doubleRect.scale.y = 0.5;
 
 	while (!update()) {
 		MediaManager.draw();

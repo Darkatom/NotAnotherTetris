@@ -1,7 +1,11 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <string>
 #include <vector>
+#include <map>
+#include <iterator> 
 #include "Sprite.h"
 
 class Media {
@@ -21,8 +25,11 @@ public:
 	void quit();
 
 private:
-	vector<Sprite> mSprites;
+	std::vector<Sprite> mSprites;
+	std::map<std::string, SDL_Texture*> textures;
 
+	SDL_Texture* loadTexture(std::string path);
+	SDL_Texture* getTexture(std::string path);
 };
 extern Media MediaManager;
 

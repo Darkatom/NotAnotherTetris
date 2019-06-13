@@ -1,4 +1,3 @@
-#include <SDL_image.h>
 #include "Sprite.h"
 
 Sprite::Sprite(Rect* newRect) {
@@ -35,30 +34,10 @@ void Sprite::free() {
 	mHeight = 0;
 }
 
-bool Sprite::loadFromFile(string path, SDL_Renderer* renderer) {
-	free();
-	
-	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-	if (loadedSurface == NULL) {
-		printf("Unable to load %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
-		SDL_FreeSurface(loadedSurface);
-		return false;
-	}
-
-	//SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-
-	mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-	if (mTexture == NULL) {
-		printf("Unable to create texture from %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
-		SDL_FreeSurface(loadedSurface);
-		return false;
-	}
-
-	mWidth = loadedSurface->w;
-	mHeight = loadedSurface->h;
-
-	SDL_FreeSurface(loadedSurface);
-	return mTexture != NULL;
+void Sprite::setTexture(SDL_Texture* newTexture) {
+	free();	
+	mTexture = newTexture;
+	SDL_QueryTexture(mTexture, NULL, NULL, &mWidth, &mHeight);
 }
 
 void Sprite::render(SDL_Renderer* renderer) {	
