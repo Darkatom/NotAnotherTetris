@@ -127,10 +127,12 @@
     <ClCompile Include="Media.cpp" />
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector2d.h" />
     <ClInclude Include="Media.h" />
     <ClInclude Include="Rect.h" />

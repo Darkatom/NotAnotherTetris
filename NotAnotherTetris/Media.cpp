@@ -62,6 +62,10 @@ void Media::destroyWindow() {
 	mRenderer = NULL;
 }
 
+void Media::loadTextFont(TTF_Font *font) {
+	mFont = font;
+}
+
 bool Media::loadSprite(std::string path, Rect* rect) {
 	SDL_Texture* texture;
 	Sprite newSprite(rect);
@@ -81,6 +85,26 @@ bool Media::loadSprite(std::string path, Rect* rect) {
 	return true;
 }
 
+bool Media::loadText(std::string text, SDL_Color color, Rect* rect) {
+	SDL_Texture* texture;
+	Sprite newSprite(rect);
+
+	std::string textKey = text + "_" + color.c_str() + "_" + color.g + color.b + color.a;
+	texture = getTexture(textKey.c_str());
+	if (texture == nullptr) {
+		texture = loadText(text, color);
+		if (texture == nullptr) {
+			printf("Failed to load text sprite \"%s\"!\n", text.c_str());
+			return false;
+		}
+		textures.insert({ textKey, texture });
+	}
+
+	newSprite.setTexture(texture);
+	mSprites.push_back(newSprite);
+	return true;
+}
+
 SDL_Texture* Media::loadTexture(std::string path) {
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL) {
@@ -91,14 +115,34 @@ SDL_Texture* Media::loadTexture(std::string path) {
 
 	//SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
-	SDL_Texture* mTexture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
-	if (mTexture == NULL) {
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, loadedSurface);
+	if (texture == NULL) {
 		printf("Unable to create texture from %s! SDL_image Error: %s\n", path.c_str(), SDL_GetError());
 		SDL_FreeSurface(loadedSurface);
 		return false;
 	}
 
-	return mTexture;
+	return texture;
+}
+
+SDL_Texture* Media::loadText(std::string text, SDL_Color textColor) {
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid(mFont, text.c_str(), textColor);
+	if (textSurface == NULL) {
+		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+		SDL_FreeSurface(textSurface);
+		return;
+	}
+
+	//Create texture from surface pixels
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, textSurface);
+	if (texture == NULL) {
+		printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+		SDL_FreeSurface(textSurface);
+		return;
+	}
+
+	return texture;
 }
 
 SDL_Texture* Media::getTexture(std::string path) {

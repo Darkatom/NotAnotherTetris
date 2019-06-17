@@ -6,13 +6,20 @@
 #include "Media.h"
 #include "Input.h"
 #include "Rect.h"
+#include "Timer.h"
 
 using namespace std;
+
+const string APP_NAME = "Not Another Tetris";
 
 // Settings
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
-const string APP_NAME = "Not Another Tetris";
+const int SCREEN_FPS = 60;
+const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+
+Uint32 frameTimer = 0;
+
 Rect helloRect(0, 0);
 Rect doubleRect(0, 0);
 
@@ -39,7 +46,7 @@ int main(int argc, char* args[]) {
 
 	while (!update()) {
 		MediaManager.draw();
-	} 
+	}
 
 	quit();
 
@@ -59,11 +66,17 @@ bool init() {
 		return false;
 	}
 	printf("\nWindow initialized.");
-	
+
+	frameTimer = SDL_GetTicks();
+	printf("\FrameTimer initialized.");	
+
 	return true;
 }
 
 bool update() {
+	float deltaTime = (float) (SDL_GetTicks() - frameTimer) / 1000.0f;
+	frameTimer = SDL_GetTicks();
+
 	InputManager.update();
 	if (InputManager.mQuit) {
 		return true;
