@@ -18,22 +18,19 @@ public:
 	bool initWindow(std::string appName, int screenWidth, int screenHeight);
 	void destroyWindow();
 
-	void loadTextFont(TTF_Font *font);
-
 	bool loadSprite(std::string path, Rect* rect);
-	bool loadText(std::string text, SDL_Color color, Rect* rect);
+	bool loadText(std::string fontPath, std::string text, SDL_Color color, Rect* rect);
 	void destroyAllSprites();
 
 	void draw();
 	void quit();
 
 private:
-	TTF_Font *mFont = NULL;
 	std::vector<Sprite> mSprites;
 	std::map<std::string, SDL_Texture*> textures;
 
 	SDL_Texture* loadTexture(std::string path);
-	SDL_Texture* loadText(std::string text, SDL_Color textColor);
+	SDL_Texture* loadTextTexture(std::string fontPath, std::string text, SDL_Color textColor);
 	SDL_Texture* getTexture(std::string path);
 };
 extern Media MediaManager;

@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Rect.h"
 #include "Timer.h"
+#include "Collider.h"
 
 using namespace std;
 
@@ -20,8 +21,7 @@ const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 Uint32 frameTimer = 0;
 
-Rect helloRect(0, 0);
-Rect doubleRect(0, 0);
+Collider box;
 
 bool init();		// Init app systems
 bool update();		// Update frame logic
@@ -36,16 +36,18 @@ int main(int argc, char* args[]) {
 		return -1;
 	}
 
-	std:string imgPath = "img/hello_world.png";
+	Vector2d center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	box = Collider(center, 15, 40, 40);
+	box.print();
 
-	MediaManager.loadSprite(imgPath, &helloRect);
-	MediaManager.loadSprite(imgPath, &doubleRect);
-
-	doubleRect.scale.x = 0.5;
-	doubleRect.scale.y = 0.5;
+	SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
 	while (!update()) {
+		SDL_SetRenderDrawColor(MediaManager.mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		MediaManager.draw();
+
+		SDL_Color color = { 255,0,0 };
+		box.draw(color);
 	}
 
 	quit();
@@ -68,7 +70,7 @@ bool init() {
 	printf("\nWindow initialized.");
 
 	frameTimer = SDL_GetTicks();
-	printf("\FrameTimer initialized.");	
+	printf("\nFrameTimer initialized.");	
 
 	return true;
 }
@@ -82,26 +84,12 @@ bool update() {
 		return true;
 	}
 
-	if (InputManager.getKeyDown(Down)) {
-		helloRect.scale.x -= 0.1;
-		helloRect.scale.y -= 0.1;
-		helloRect.scale.x = helloRect.scale.x < 0.1 ? 0.1 : helloRect.scale.x;
-		helloRect.scale.y = helloRect.scale.y < 0.1 ? 0.1 : helloRect.scale.y;
-	}
-
-	if (InputManager.getKeyDown(Up)) {
-		helloRect.scale.x += 0.1;
-		helloRect.scale.y += 0.1;
-		helloRect.scale.x = helloRect.scale.x > 1 ? 1 : helloRect.scale.x;
-		helloRect.scale.y = helloRect.scale.y > 1 ? 1 : helloRect.scale.y;
-	}
-
 	if (InputManager.getKey(Left)) {
-		helloRect.rotation -= 0.1;
+		box.rotation -= 0.1;
 	}
 
 	if (InputManager.getKey(Right)) {
-		helloRect.rotation += 0.1;
+		box.rotation += 0.1;
 	}
 	// Update game
 

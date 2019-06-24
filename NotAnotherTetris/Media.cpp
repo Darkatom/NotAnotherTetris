@@ -62,10 +62,6 @@ void Media::destroyWindow() {
 	mRenderer = NULL;
 }
 
-void Media::loadTextFont(TTF_Font *font) {
-	mFont = font;
-}
-
 bool Media::loadSprite(std::string path, Rect* rect) {
 	SDL_Texture* texture;
 	Sprite newSprite(rect);
@@ -85,14 +81,14 @@ bool Media::loadSprite(std::string path, Rect* rect) {
 	return true;
 }
 
-bool Media::loadText(std::string text, SDL_Color color, Rect* rect) {
+bool Media::loadText(std::string fontPath, std::string text, SDL_Color color, Rect* rect) {
 	SDL_Texture* texture;
 	Sprite newSprite(rect);
 
-	std::string textKey = text + "_" + color.c_str() + "_" + color.g + color.b + color.a;
+	std::string textKey = text + "_" + ((char)color.g) + ((char)color.b) + ((char)color.a);
 	texture = getTexture(textKey.c_str());
 	if (texture == nullptr) {
-		texture = loadText(text, color);
+		texture = loadTextTexture(fontPath, text, color);
 		if (texture == nullptr) {
 			printf("Failed to load text sprite \"%s\"!\n", text.c_str());
 			return false;
@@ -125,13 +121,19 @@ SDL_Texture* Media::loadTexture(std::string path) {
 	return texture;
 }
 
-SDL_Texture* Media::loadText(std::string text, SDL_Color textColor) {
+SDL_Texture* Media::loadTextTexture(std::string fontPath, std::string text, SDL_Color textColor) {
+	TTF_Font *font = TTF_OpenFont(fontPath.c_str(), 28);
+	if (font == NULL) {
+		printf("Failed to load font! TTF Error: %s\n", TTF_GetError());
+		return nullptr;
+	}
+
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid(mFont, text.c_str(), textColor);
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
 	if (textSurface == NULL) {
 		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
 		SDL_FreeSurface(textSurface);
-		return;
+		return nullptr;
 	}
 
 	//Create texture from surface pixels
@@ -139,7 +141,7 @@ SDL_Texture* Media::loadText(std::string text, SDL_Color textColor) {
 	if (texture == NULL) {
 		printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
 		SDL_FreeSurface(textSurface);
-		return;
+		return nullptr;
 	}
 
 	return texture;
