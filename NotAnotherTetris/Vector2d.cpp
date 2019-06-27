@@ -20,9 +20,22 @@ Vector2d Vector2d::operator + (const float A) const {
 	return Vector2d(x + A, y + A);
 }
 
+Vector2d Vector2d::operator - (const Vector2d& A) const {
+	return Vector2d(x - A.x, y - A.y);
+}
+
+Vector2d Vector2d::operator - (const float A) const {
+	return Vector2d(x - A, y - A);
+}
+
+Vector2d Vector2d::operator * (const float A) const {
+	return Vector2d(x * A, y * A);
+}
+
 void Vector2d::rotate (const float angle) {
-	float aux =  cos(x * angle) - y * sin(angle);
-	y = x * sin(angle) - y * cos(angle);
+	float radians = angle * 0.01745;
+	float aux = x * cos(radians) - y * sin(radians);
+	y = x * sin(radians) + y * cos(radians);
 	x = aux;
 }
 

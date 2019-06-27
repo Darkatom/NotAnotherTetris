@@ -21,7 +21,12 @@ bool Collider::intersects(Collider other) {
 }
 
 bool Collider::contains(Vector2d point) {
-	return false;
+	Vector2d delta = point - position;
+	delta.rotate(-rotation);
+	return (point.x >= position.x - width/2) 
+		&& (point.x <= position.x + width/2)
+		&& (point.y >= position.y - height/2)
+		&& (point.y <= position.y + height/2);
 }
 
 

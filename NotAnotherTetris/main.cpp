@@ -37,7 +37,7 @@ int main(int argc, char* args[]) {
 	}
 
 	Vector2d center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	box = Collider(center, 15, 40, 40);
+	box = Collider(center, 0, 40, 40);
 	box.print();
 
 	SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
@@ -85,11 +85,11 @@ bool update() {
 	}
 
 	if (InputManager.getKey(Left)) {
-		box.rotation -= 0.1;
+		box.rotation -= 1;
 	}
 
 	if (InputManager.getKey(Right)) {
-		box.rotation += 0.1;
+		box.rotation += 1;
 	}
 	// Update game
 
