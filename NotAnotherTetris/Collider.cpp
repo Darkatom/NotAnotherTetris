@@ -17,7 +17,7 @@ Collider::~Collider() {
 }
 
 bool Collider::intersects(Collider other) {	
-	return containsAny(other.getPoints()) || other.containsAny(getPoints());;
+	return containsAny(other.getVertices()) || other.containsAny(getVertices());;
 }
 
 bool Collider::contains(Vector2d point) {
@@ -45,7 +45,7 @@ bool Collider::containsAll(std::vector<Vector2d> points) {
 	return i >= 4;
 }
 
-std::vector<Vector2d> Collider::getPoints() {
+std::vector<Vector2d> Collider::getVertices() {
 	Vector2d A(-width / 2,-height / 2);
 	Vector2d B(width / 2, -height / 2);
 	Vector2d C(width / 2, height / 2);
@@ -65,7 +65,7 @@ std::vector<Vector2d> Collider::getPoints() {
 void Collider::print() {
 	printf("\n[Collider] Center: {%.2f, %.2f} - Rotation: %.2f - Size: [%.2f, %.2f]", position.x, position.y, rotation, width, height);
 	printf("\n----> Corners:");
-	std::vector<Vector2d> points = this->getPoints();
+	std::vector<Vector2d> points = this->getVertices();
 	points[0].print();
 	points[1].print();
 	points[2].print();
@@ -73,7 +73,7 @@ void Collider::print() {
 }
 
 void Collider::draw(SDL_Color color) {
-	std::vector<Vector2d> points = this->getPoints();
+	std::vector<Vector2d> points = this->getVertices();
 
 	SDL_SetRenderDrawColor(MediaManager.mRenderer, color.r, color.g, color.b, 0xFF);
 	SDL_RenderDrawLine(MediaManager.mRenderer, points[0].x, points[0].y, points[1].x, points[1].y);

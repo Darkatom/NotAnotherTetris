@@ -20,7 +20,7 @@ public:
 	bool containsAny(std::vector<Vector2d> points);
 	bool containsAll(std::vector<Vector2d> points);
 	
-	std::vector<Vector2d> getPoints();
+	std::vector<Vector2d> getVertices();
 
 	void print();
 	void draw(SDL_Color color);
