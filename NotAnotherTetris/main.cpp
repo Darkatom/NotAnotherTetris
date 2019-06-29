@@ -91,6 +91,7 @@ bool update() {
 	if (InputManager.getKey(Right)) {
 		box.rotation += 1;
 	}
+	
 	// Update game
 
 	return false;

@@ -16,8 +16,8 @@ Collider::~Collider() {
 
 }
 
-bool Collider::intersects(Collider other) {
-	return false;
+bool Collider::intersects(Collider other) {	
+	return containsAny(other.getPoints()) || other.containsAny(getPoints());;
 }
 
 bool Collider::contains(Vector2d point) {
@@ -29,6 +29,21 @@ bool Collider::contains(Vector2d point) {
 		&& (point.y <= position.y + height/2);
 }
 
+bool Collider::containsAny(std::vector<Vector2d> points) {
+	int i = 0;
+	while (i < 4 && !contains(points[i])) {
+		i++;
+	}
+	return i < 4;
+}
+
+bool Collider::containsAll(std::vector<Vector2d> points) {
+	int i = 0;
+	while (i < 4 && contains(points[i])) {
+		i++;
+	}
+	return i >= 4;
+}
 
 std::vector<Vector2d> Collider::getPoints() {
 	Vector2d A(-width / 2,-height / 2);

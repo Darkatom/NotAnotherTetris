@@ -25,6 +25,44 @@ void Input::update() {
 }
 
 void Input::processEvent(SDL_Event event) {
+	processKeyboardEvent(event);
+	processMouseEvent(event);
+}
+
+void Input::processMouseEvent(SDL_Event event) {
+	if (event.type == SDL_MOUSEMOTION) {
+		mMousePosition.x = event.button.x;
+		mMousePosition.y = event.button.y;
+		return;
+	}
+
+	KEY_CODE index = _TotalKeys;
+	switch (event.button.button) {
+		case SDL_BUTTON_LEFT:
+			index = MouseLeft;
+			break;
+		case SDL_BUTTON_MIDDLE:
+			index = MouseMiddle;
+			break;
+		case SDL_BUTTON_RIGHT:
+			index = MouseRight;
+			break;
+		case SDL_BUTTON_X1:
+			index = MouseX1;
+			break;
+		case SDL_BUTTON_X2:
+			index = MouseX2;
+			break;
+	}
+
+	if (index == _TotalKeys) {
+		return;
+	}
+
+	mKeyStates[index] = event.type == SDL_MOUSEBUTTONDOWN;
+}
+
+void Input::processKeyboardEvent(SDL_Event event) {
 	KEY_CODE index = _TotalKeys;
 	SDL_Keycode keyEvent = event.key.keysym.sym;
 	if (keyEvent == SDLK_UP || keyEvent == SDLK_w) {
@@ -51,12 +89,11 @@ void Input::processEvent(SDL_Event event) {
 		index = RightShift;
 	}
 
-	if (event.type == SDL_KEYUP) {
-		mKeyStates[index] = false;
-
-	} else if (event.type == SDL_KEYDOWN) {
-		mKeyStates[index] = true;
+	if (index == _TotalKeys) {
+		return;
 	}
+
+	mKeyStates[index] = event.type == SDL_KEYDOWN;
 }
 
 bool Input::getKeyDown(KEY_CODE code) {
@@ -69,6 +106,10 @@ bool Input::getKeyUp(KEY_CODE code) {
 
 bool Input::getKey(KEY_CODE code) {
 	return mKeyStates[code];
+}
+
+Vector2d Input::getMousePosition() {
+	return mMousePosition;
 }
 
 void Input::printState() {	

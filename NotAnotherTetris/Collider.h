@@ -17,6 +17,8 @@ public:
 
 	bool intersects(Collider other);
 	bool contains(Vector2d point);
+	bool containsAny(std::vector<Vector2d> points);
+	bool containsAll(std::vector<Vector2d> points);
 	
 	std::vector<Vector2d> getPoints();
 
