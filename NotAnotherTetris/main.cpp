@@ -21,7 +21,10 @@ const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
 Uint32 frameTimer = 0;
 
-Collider box;
+Sprite* sprite;
+Rect textRect;
+Sprite* sprite2;
+Rect textRect2;
 
 bool init();		// Init app systems
 bool update();		// Update frame logic
@@ -37,17 +40,20 @@ int main(int argc, char* args[]) {
 	}
 
 	Vector2d center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	box = Collider(center, 0, 40, 40);
-	box.print();
+
+	SDL_Color color = { 0,0,0 };
+	SDL_Color color2 = { 255,0,0 };
+	textRect = Rect(center.x, center.y);
+	textRect2 = Rect(center.x + 5, center.y + 5);
+
+	sprite = MediaManager.newSprite("img/a.png", 1, &textRect);
+	sprite2 = MediaManager.newSprite("img/b.png", 2, &textRect2);
 
 	SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
 
 	while (!update()) {
 		SDL_SetRenderDrawColor(MediaManager.mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 		MediaManager.draw();
-
-		SDL_Color color = { 255,0,0 };
-		box.draw(color);
 	}
 
 	quit();
@@ -83,15 +89,20 @@ bool update() {
 	if (InputManager.mQuit) {
 		return true;
 	}
-
-	if (InputManager.getKey(Left)) {
-		box.rotation -= 1;
-	}
-
-	if (InputManager.getKey(Right)) {
-		box.rotation += 1;
-	}
 	
+	if (InputManager.getKeyDown(SDLK_LEFT)) {
+		sprite->setLayer(1);
+		sprite2->setLayer(2);
+		MediaManager.print();
+		MediaManager.sortLayers();
+	}
+
+	if (InputManager.getKeyDown(SDLK_RIGHT)) {
+		sprite->setLayer(2);
+		sprite2->setLayer(1);
+		MediaManager.print();
+		MediaManager.sortLayers();
+	}
 	// Update game
 
 	return false;

@@ -3,7 +3,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <string>
-#include <vector>
+#include <list>
 #include <map>
 #include <iterator> 
 #include "Sprite.h"
@@ -18,20 +18,27 @@ public:
 	bool initWindow(std::string appName, int screenWidth, int screenHeight);
 	void destroyWindow();
 
-	bool loadSprite(std::string path, Rect* rect);
-	bool loadText(std::string fontPath, std::string text, SDL_Color color, Rect* rect);
+	Sprite* newSprite(std::string path, int layer, Rect* rect);
+	Sprite* newText(std::string fontPath, std::string text, SDL_Color color, int layer, Rect* rect);
+	void sortLayers();
 	void destroyAllSprites();
 
 	void draw();
+	void print();
 	void quit();
 
 private:
-	std::vector<Sprite> mSprites;
+	int mSpriteCount;
+	std::list<Sprite> mSprites;
 	std::map<std::string, SDL_Texture*> textures;
 
 	SDL_Texture* loadTexture(std::string path);
 	SDL_Texture* loadTextTexture(std::string fontPath, std::string text, SDL_Color textColor);
 	SDL_Texture* getTexture(std::string path);
+
+	Sprite* newSprite(SDL_Texture* texture, int layer, Rect* rect);
+
+	int getSortedPosition(int layerValue);
 };
 extern Media MediaManager;
 

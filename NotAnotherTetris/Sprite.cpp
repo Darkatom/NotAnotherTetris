@@ -1,6 +1,8 @@
 #include "Sprite.h"
 
-Sprite::Sprite(Rect* newRect) {
+Sprite::Sprite(int id, int layer, Rect* newRect) {
+	mId = id;
+	mLayer = layer;
 	mTexture = NULL;
 	rect = newRect;
 	mWidth = 0;
@@ -41,6 +43,10 @@ void Sprite::setTexture(SDL_Texture* newTexture) {
 }
 
 void Sprite::render(SDL_Renderer* renderer) {	
+	if (!mEnabled) {
+		return;
+	}
+
 	SDL_Rect renderQuad = { 
 		rect->position.x, 
 		rect->position.y,
@@ -53,10 +59,30 @@ void Sprite::render(SDL_Renderer* renderer) {
 	}
 }
 
+bool Sprite::operator > (const Sprite& other) const {
+	return (mLayer > other.mLayer);
+}
+
+bool Sprite::operator < (const Sprite& other) const {
+	return (mLayer < other.mLayer);
+}
+
 int Sprite::getWidth() {
 	return mWidth;
 }
 
 int Sprite::getHeight() {
 	return mHeight;
+}
+
+int Sprite::getLayer() {
+	return mLayer;
+}
+
+void Sprite::setLayer(int value) {
+	mLayer = value;
+}
+
+void Sprite::print() {
+	printf("\n[Sprite] Id: %i - Layer: %i", mId, mLayer);
 }

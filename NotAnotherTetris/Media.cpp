@@ -1,4 +1,5 @@
 #include "Media.h"
+#include <algorithm>
 
 Media MediaManager;	// Global media manager
 
@@ -62,28 +63,24 @@ void Media::destroyWindow() {
 	mRenderer = NULL;
 }
 
-bool Media::loadSprite(std::string path, Rect* rect) {
+Sprite* Media::newSprite(std::string path, int layer, Rect* rect) {
 	SDL_Texture* texture;
-	Sprite newSprite(rect);
 	
 	texture = getTexture(path);
 	if (texture == nullptr) {
 		texture = loadTexture(path);
 		if (texture == nullptr) {
 			printf("Failed to load texture image at %s!\n", path.c_str());
-			return false;
+			return nullptr;
 		}
 		textures.insert({ path, texture });
 	}
-		
-	newSprite.setTexture(texture);
-	mSprites.push_back(newSprite);
-	return true;
+
+	return newSprite(texture, layer, rect);
 }
 
-bool Media::loadText(std::string fontPath, std::string text, SDL_Color color, Rect* rect) {
+Sprite* Media::newText(std::string fontPath, std::string text, SDL_Color color, int layer, Rect* rect) {
 	SDL_Texture* texture;
-	Sprite newSprite(rect);
 
 	std::string textKey = text + "_" + ((char)color.g) + ((char)color.b) + ((char)color.a);
 	texture = getTexture(textKey.c_str());
@@ -91,14 +88,12 @@ bool Media::loadText(std::string fontPath, std::string text, SDL_Color color, Re
 		texture = loadTextTexture(fontPath, text, color);
 		if (texture == nullptr) {
 			printf("Failed to load text sprite \"%s\"!\n", text.c_str());
-			return false;
+			return nullptr;
 		}
 		textures.insert({ textKey, texture });
 	}
 
-	newSprite.setTexture(texture);
-	mSprites.push_back(newSprite);
-	return true;
+	return newSprite(texture, layer, rect);
 }
 
 SDL_Texture* Media::loadTexture(std::string path) {
@@ -157,18 +152,54 @@ SDL_Texture* Media::getTexture(std::string path) {
 	return nullptr;
 }
 
+Sprite* Media::newSprite(SDL_Texture* texture, int layer, Rect* rect) {
+	Sprite newSprite(mSpriteCount++, layer, rect);
+	newSprite.setTexture(texture);
+
+	int position = getSortedPosition(newSprite.getLayer());	
+	if (position > 0) {
+		mSprites.insert(mSprites.begin(), position, newSprite);
+	} else {
+		mSprites.push_back(newSprite);
+	}
+	return &mSprites.back();
+}
+
+int Media::getSortedPosition(int layerValue) {
+	std::list<Sprite>::iterator i, end;
+	int count = 0;
+	while (i != end && i->getLayer() < layerValue) {
+		++i;
+		count++;
+	}
+	return count;
+}
+
+void Media::sortLayers() {
+	mSprites.sort([](const Sprite &a, const Sprite &b) { return a < b; });
+}
+
 void Media::destroyAllSprites() {
-	for (size_t i = 0; i < mSprites.size(); i++) {
-		mSprites[i].destroy();
+	std::list<Sprite>::iterator i, end;
+	for (i = mSprites.begin(), end = mSprites.end(); i != end; ++i) {
+		i->destroy();
 	}
 }
 
 void Media::draw() {
 	SDL_RenderClear(mRenderer);
-	for (size_t i = 0; i < mSprites.size(); i++) {
-		mSprites[i].render(mRenderer);
+	std::list<Sprite>::iterator i, end;
+	for (i = mSprites.begin(), end = mSprites.end(); i != end; ++i) {
+		i->render(mRenderer);
 	}
 	SDL_RenderPresent(mRenderer);
+}
+
+void Media::print() {
+	std::list<Sprite>::iterator i, end;
+	for (i = mSprites.begin(), end = mSprites.end(); i != end; ++i) {
+		i->print();
+	}
 }
 
 void Media::quit() {
