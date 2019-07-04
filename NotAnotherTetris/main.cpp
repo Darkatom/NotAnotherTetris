@@ -90,14 +90,14 @@ bool update() {
 		return true;
 	}
 	
-	if (InputManager.getKeyDown(SDLK_LEFT)) {
+	if (InputManager.getKeyDown(Key_Left)) {
 		sprite->setLayer(1);
 		sprite2->setLayer(2);
 		MediaManager.print();
 		MediaManager.sortLayers();
 	}
 
-	if (InputManager.getKeyDown(SDLK_RIGHT)) {
+	if (InputManager.getKeyDown(Key_Right)) {
 		sprite->setLayer(2);
 		sprite2->setLayer(1);
 		MediaManager.print();
